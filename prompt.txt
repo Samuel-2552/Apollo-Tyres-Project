@@ -1,0 +1,11 @@
+write a flask app and html css and js code for creating a website with nice design and functionalities.
+
+at home page there are two logos placed at left and right corner.
+the title is mentioned as : "Trench Conveyor AI interface – A Conveyor Tyre Jamming Detection System".
+
+Below there is a css card that asks for password to proceed. "set the password to be 1234 as of now."
+
+do the authentication, if successful redirect to another page with same logo at both corners and title.
+
+below that create a card with No of Camera number field input.
+based on the no of cameras then create that many number of select box for COM Port No. 

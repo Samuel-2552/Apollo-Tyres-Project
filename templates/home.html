@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trench Conveyor AI Interface</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="logo logo-left"><img src="{{ url_for('static', filename='assets/REC Logo.png') }}" width="100px" height="auto"></div>
+        <div class="logo logo-right"><img src="{{ url_for('static', filename='assets/Apollo logo.png') }}" width="80px" height="auto"></div>
+        <h1 class="title">Trench Conveyor AI Interface</h1>
+        <div class="login-card">
+            <form action="/" method="post">
+                <input type="password" name="password" placeholder="Enter password">
+                <input type="submit" value="Submit">
+            </form>
+            {% if error_message %}
+                <p class="error-message" style="color:red;">{{ error_message }}</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

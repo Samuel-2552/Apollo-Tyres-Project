@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit, QAction
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, QTimer
 import sys
 
 
@@ -18,33 +18,50 @@ class WebBrowser(QMainWindow):
         self.web_view = QWebEngineView(self)
         self.setCentralWidget(self.web_view)
 
-        # Create an address bar
-        self.address_bar = QLineEdit(self)
-        self.address_bar.returnPressed.connect(self.navigate_to_url)
-        self.addToolBar("AddressBar").addWidget(self.address_bar)
-
-        # Create navigation actions
-        nav_bar = self.addToolBar("Navigation")
-        nav_bar.addAction("Back", self.navigate_back)
-        nav_bar.addAction("Forward", self.navigate_forward)
-        nav_bar.addAction("Refresh", self.refresh)
-
         # Set a default URL to load
-        default_url = "https://www.example.com"
+        default_url = "https://www.google.com"
         self.web_view.setUrl(QUrl(default_url))
 
-    def navigate_to_url(self):
-        url = self.address_bar.text()
-        self.web_view.setUrl(QUrl(url))
+        # Create a non-editable address bar
+        self.address_bar = QLineEdit(self)
+        self.address_bar.setReadOnly(True)
+        self.address_bar.setText(default_url)
+        self.addToolBar("AddressBar").addWidget(self.address_bar)
 
-    def navigate_back(self):
-        self.web_view.back()
+        # Create a timer to open the password window after 2 seconds
+        QTimer.singleShot(2000, self.open_password_window)
 
-    def navigate_forward(self):
-        self.web_view.forward()
+    def open_password_window(self):
+        password_window = PasswordWindow(self)
+        password_window.show()
+        self.setEnabled(False)
 
-    def refresh(self):
-        self.web_view.reload()
+class PasswordWindow(QMainWindow):
+    def __init__(self, main_window):
+        super().__init__()
+
+        self.main_window = main_window
+
+        self.setWindowTitle("Password Window")
+        self.setGeometry(200, 200, 400, 300)
+
+        self.password_input = QLineEdit(self)
+        self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setGeometry(100, 100, 200, 30)
+
+        submit_button = QAction("Submit", self)
+        submit_button.triggered.connect(self.check_password)
+
+        self.toolbar = self.addToolBar("Toolbar")
+        self.toolbar.addAction(submit_button)
+
+    def check_password(self):
+        entered_password = self.password_input.text()
+        if entered_password == "password":
+            self.close()
+            self.main_window.setEnabled(True)
+        else:
+            QMessageBox.warning(self, "Incorrect Password", "Please enter the correct password.")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

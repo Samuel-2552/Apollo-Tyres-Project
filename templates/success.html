@@ -13,18 +13,8 @@
             Authentication successful!
         </div><br>
         <div class="video-container">
-            <video id="video-player" width="600" height="auto" controls poster="{{ url_for('static', filename='assets/REC Logo.png') }}">
-                
-            </video>
-            <!-- <button id="play-button" onclick="playVideo()">Play Video</button> -->
+            <img  id="video-player" width="600" height="auto" controls src="{{ url_for('video_feed') }}" alt="Camera Feed">
         </div>
     </div>
-    <!-- <script>
-        // JavaScript code to play the video when the button is clicked
-        function playVideo() {
-            var videoPlayer = document.getElementById("video-player");
-            videoPlayer.play();
-        }
-    </script> -->
 </body>
 </html>

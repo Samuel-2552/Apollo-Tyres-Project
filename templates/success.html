@@ -69,7 +69,7 @@
     <script>
         // Function to update the timer text dynamically
         function updateTimerText(seconds, dots) {
-            document.getElementById('timer').innerHTML = `AI Setting Up in ${seconds} seconds ${dots}`;
+            document.getElementById('timer').innerHTML = `Redirecting in ${seconds} seconds ${dots}`;
         }
 
         // Function to redirect after a given number of seconds
@@ -96,7 +96,7 @@
 
         // Call the redirectWithTimer function when the page loads
         window.onload = function() {
-            redirectWithTimer("/", 10); // Redirect to the home page after 10 seconds
+            redirectWithTimer("/test", 10); // Redirect to the home page after 10 seconds
         };
     </script>
 </head>
@@ -106,7 +106,8 @@
         <div class="logo logo-right"><img src="{{ url_for('static', filename='assets/Apollo logo.png') }}" width="80px" height="auto"></div>
         <h1 class="title">Trench Conveyor AI Interface</h1>
         <div class="success-message">Authentication successful!</div>
-        <div class="timer" id="timer">AI Setting Up in 10 seconds</div>
+        <center><h4>AI Environment being set up!</h4></center>
+        <div class="timer" id="timer">Redirecting in 10 seconds</div>
     </div>
 </body>
 </html>

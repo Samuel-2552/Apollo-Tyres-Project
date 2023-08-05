@@ -35,6 +35,10 @@ def home():
 
     return render_template("home.html", error_message=error_message)
 
+@app.route("/test")
+def test():
+    return render_template("test.html")
+
 @app.route("/success")
 def success():
     return render_template("success.html")

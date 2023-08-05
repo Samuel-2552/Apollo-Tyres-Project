@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trench Conveyor AI Interface</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="logo logo-left"><img src="{{ url_for('static', filename='assets/REC Logo.png') }}" width="100px" height="auto"></div>
+        <div class="logo logo-right"><img src="{{ url_for('static', filename='assets/Apollo logo.png') }}" width="80px" height="auto"></div>
+        <h1 class="title">Trench Conveyor AI Interface</h1><br>
+        <center><h3>Check the Cameras</h3></center>
+        <div class="sub-container">
+            <div class="card" id="card1">
+                <h3>Camera 1</h3>
+                <form action="/submit-address" method="post">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required>
+                    <br> <br>
+                    <button class="btn" type="submit">Test</button>
+                </form>
+            </div>
+        </div>
+        <div class="sub-container">
+            <div class="card" id="card1">
+                <h3>Camera 2</h3>
+                <form action="/submit-address" method="post">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required>
+                    <br> <br>
+                    <button class="btn" type="submit">Test</button>
+                </form>
+            </div>
+        </div>
+        <div class="sub-container">
+            <div class="card" id="card1">
+                <h3>Camera 3</h3>
+                <form action="/submit-address" method="post">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required>
+                    <br> <br>
+                    <button class="btn" type="submit">Test</button>
+                </form>
+            </div>
+        </div>
+        <div class="sub-container">
+            <div class="card" id="card1">
+                <h3>Camera 4</h3>
+                <form action="/submit-address" method="post">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required>
+                    <br> <br>
+                    <button class="btn" type="submit">Test</button>
+                </form>
+            </div>
+        </div>
+        <br>
+        <center><button class="btn" disabled>Proceed</button></center>
+    </div>
+</body>
+</html>
+
+
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Testing App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="card" id="card1">
+            <h3>Camera 1</h3>
+            <p>Address Link</p>
+            <button class="test-btn" onclick="testCamera(1)">Test</button>
+        </div>
+        <div class="card" id="card2">
+            <h3>Camera 2</h3>
+            <p>Address Link</p>
+            <button class="test-btn" onclick="testCamera(2)">Test</button>
+        </div>
+        <div class="card" id="card3">
+            <h3>Camera 3</h3>
+            <p>Address Link</p>
+            <button class="test-btn" onclick="testCamera(3)">Test</button>
+        </div>
+        <div class="card" id="card4">
+            <h3>Camera 4</h3>
+            <p>Address Link</p>
+            <button class="test-btn" onclick="testCamera(4)">Test</button>
+        </div>
+
+        <button id="submit-btn" disabled onclick="submitForm()">Submit</button>
+    </div>
+
+    <script>
+        // JavaScript code inline within the HTML file
+        // Array to keep track of camera testing results
+        const cameraResults = [false, false, false, false];
+
+        // Function to check if all cameras are tested and enable the submit button
+        function checkSubmitButton() {
+            const submitBtn = document.getElementById("submit-btn");
+            if (cameraResults.every((result) => result)) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Function to handle camera testing
+        function testCamera(cardIndex) {
+            // Implement AJAX request to Flask server
+            // In this example, we're using mock results after a short timeout
+            setTimeout(() => {
+                const isWorking = Math.random() < 0.5; // Randomly return true or false
+                if (isWorking) {
+                    // Camera is working
+                    cameraResults[cardIndex - 1] = true;
+                    checkSubmitButton();
+                    const testBtn = document.getElementById(`card${cardIndex}`).querySelector('.test-btn');
+                    testBtn.style.backgroundColor = 'green';
+                    // Display the small video output of the camera (Optional, you may need to implement this separately)
+                } else {
+                    // Camera is not working
+                    cameraResults[cardIndex - 1] = false;
+                    checkSubmitButton();
+                    const testBtn = document.getElementById(`card${cardIndex}`).querySelector('.test-btn');
+                    testBtn.style.backgroundColor = 'red';
+                }
+            }, 1000); // Simulating camera testing delay
+        }
+
+        // Function to handle the form submission (Navigating to a different page)
+        function submitForm() {
+            // Implement the form submission logic here
+            // For demonstration purposes, we will simply redirect to another page
+            window.location.href = '/thank_you_page';
+        }
+    </script>
+</body>
+</html> -->

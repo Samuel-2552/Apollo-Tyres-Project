@@ -3,6 +3,7 @@ import subprocess
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QVBoxLayout, QWidget, QSizePolicy
 from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtGui import QIcon
 
 class BrowserWindow(QMainWindow):
     def __init__(self):
@@ -11,7 +12,10 @@ class BrowserWindow(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle("AI Trench Conveyor")
-        self.resize(800, 600)
+        self.resize(1300, 900)
+        # Set the custom icon
+        icon_path = "static/assets/REC Logo.png"  # Replace "icon.png" with the actual path to your icon file
+        self.setWindowIcon(QIcon(icon_path))
 
         # Create the web view widget
         self.webview = QWebEngineView(self)

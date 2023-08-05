@@ -1,7 +1,7 @@
 import sys
 import subprocess
 from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QWidget, QSizePolicy
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QVBoxLayout, QWidget, QSizePolicy
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 class BrowserWindow(QMainWindow):
@@ -10,7 +10,7 @@ class BrowserWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Simple Web Browser")
+        self.setWindowTitle("AI Trench Conveyor")
         self.resize(800, 600)
 
         # Create the web view widget
@@ -18,22 +18,8 @@ class BrowserWindow(QMainWindow):
         self.webview.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.webview.urlChanged.connect(self.update_address_bar)  # Connect the urlChanged signal
 
-        # Create the address bar
-        self.address_bar = QLineEdit(self)
-        self.address_bar.returnPressed.connect(self.load_url)
-
-        # Create the go button
-        self.go_button = QPushButton("Go", self)
-        self.go_button.clicked.connect(self.load_url)
-
-        # Create a horizontal layout to hold the address bar and go button
-        self.address_layout = QHBoxLayout()
-        self.address_layout.addWidget(self.address_bar)
-        self.address_layout.addWidget(self.go_button)
-
-        # Create a vertical layout to hold the address layout and web view
+        # Create a vertical layout to hold the web view
         self.main_layout = QVBoxLayout()
-        self.main_layout.addLayout(self.address_layout)
         self.main_layout.addWidget(self.webview)
 
         # Create a central widget to set the layout
@@ -59,9 +45,7 @@ class BrowserWindow(QMainWindow):
         self.webview.setUrl(QUrl(url))
 
     def update_address_bar(self, url):
-        self.address_bar.setText(url.toString())
-
-
+        pass
 
 if __name__ == "__main__":
     # Run the Flask app in a separate process

@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 1600px;
     margin: 100px auto;
     padding: 20px;
     background-color: #f8f8f8;
@@ -14,7 +14,7 @@ body {
 }
 
 .test-container {
-    max-width: 800px;
+    max-width: 1600px;
     margin: 100px auto;
     padding: 20px;
     background-color: #f8f8f8;
@@ -23,7 +23,7 @@ body {
 }
 
 .container-video {
-    max-width: 1450px;
+    max-width: 1600px;
     margin: 100px auto;
     padding: 20px;
     background-color: #f8f8f8;
@@ -46,6 +46,15 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.sub-container-video {
+    max-width: 1600px;
+    margin: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 .logo {
     width: 100px;
     height: 100px;
@@ -60,6 +69,7 @@ body {
 
 .logo-right {
     background-image: url('path/to/right_logo.png');
+    margin-right: 80px;
     float: right;
 }
 

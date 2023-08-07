@@ -43,6 +43,10 @@ def test():
 def success():
     return render_template("success.html")
 
+@app.route('/video')
+def video():
+    return render_template("video.html")
+
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')

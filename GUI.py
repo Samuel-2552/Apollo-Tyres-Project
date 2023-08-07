@@ -12,7 +12,7 @@ class BrowserWindow(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle("AI Trench Conveyor")
-        self.resize(1300, 900)
+        self.showMaximized()
         # Set the custom icon
         icon_path = "static/assets/REC Logo.png"  # Replace "icon.png" with the actual path to your icon file
         self.setWindowIcon(QIcon(icon_path))

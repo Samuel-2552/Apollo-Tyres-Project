@@ -50,11 +50,8 @@ class BrowserWindow(QMainWindow):
         exit_action = QAction(QIcon("icon_exit.png"), "Exit", self)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
-        
 
-        
-
-        # Load Google by default
+        # Load this link by default
         self.load_url("http://127.0.0.1:5000")
 
     def load_url(self, url=None):
@@ -80,9 +77,6 @@ class BrowserWindow(QMainWindow):
         initial_dir = os.getcwd()  # Get the current working directory where the application runs
         initial_dir += "/Reports"
         os.startfile(initial_dir)
-        # folder = QFileDialog.getExistingDirectory(self, "Select Folder", initial_dir)
-        # if folder:
-        #     QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
 
 if __name__ == "__main__":
     # Run the Flask app in a separate process

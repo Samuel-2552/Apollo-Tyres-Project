@@ -7,7 +7,7 @@ app = Flask(__name__)
 PASSWORD = "1234"
 
 # OpenCV VideoCapture object to access the camera
-camera = cv2.VideoCapture(0)  # Use '0' for the default camera, change to other numbers for different cameras if available
+camera = cv2.VideoCapture(1)  # Use '0' for the default camera, change to other numbers for different cameras if available
 
 def generate_frames():
     while True:

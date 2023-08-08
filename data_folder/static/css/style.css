@@ -133,7 +133,7 @@ body {
 
 /* Add a new class for enlarged video player */
 .enlarged {
-    transform: scale(2);
+    transform: scale(2.3);
     z-index: 2;
     transition: transform 0.3s ease;
     margin: auto;

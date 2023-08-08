@@ -78,11 +78,3 @@ class BrowserWindow(QMainWindow):
         initial_dir += "/data_folder/Reports"
         os.startfile(initial_dir)
 
-if __name__ == "__main__":
-    # Run the Flask app in a separate process
-    # flask_process = subprocess.Popen(["python", "data_folder/app.py"])
-
-    app = QApplication(sys.argv)
-    browser = BrowserWindow()
-    browser.show()
-    sys.exit(app.exec_())

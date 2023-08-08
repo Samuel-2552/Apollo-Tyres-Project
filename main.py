@@ -17,11 +17,13 @@ if getattr(sys, 'frozen', False):
     # to make sure the 'data_folder' is accessible.
     os.chdir(sys._MEIPASS)
 
-# Run Flask app in the background
-run_flask_app()
 
-# Run your GUI application
-app = QApplication(sys.argv)
-browser = BrowserWindow()
-browser.show()
-sys.exit(app.exec_())
+if __name__ == "__main__":
+    # Run Flask app in the background
+    run_flask_app()
+
+    # Run your GUI application
+    app = QApplication(sys.argv)
+    browser = BrowserWindow()
+    browser.show()
+    sys.exit(app.exec_())

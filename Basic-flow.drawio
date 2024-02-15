@@ -1,85 +1,127 @@
-<mxfile host="app.diagrams.net" modified="2024-02-11T15:40:41.220Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" etag="RWOiArs9G6VZA5tmq8BO" version="23.1.2" type="device">
+<mxfile host="app.diagrams.net" modified="2024-02-15T17:08:29.777Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" etag="9uq203Zha5u4_3mK3XL4" version="23.1.2" type="device">
   <diagram name="Page-1" id="P-5xKzaI7M9U87d7nagk">
-    <mxGraphModel dx="1434" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1050" dy="1622" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-1" value="One time Setup" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-1" value="One time Setup" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="170" y="40" width="200" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-3">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-3" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="639.9999999999998" y="105" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-3" value="Get the System UUID&amp;nbsp;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-3" value="Get the System UUID&amp;nbsp;" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="490" y="65" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-5" target="RgMGi3w3JgoJ1hdSAF0_-6">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-5" target="RgMGi3w3JgoJ1hdSAF0_-6" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-5" value="Get the No of Camera" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-5" value="Get the No of Camera" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="640" y="65" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-6" target="RgMGi3w3JgoJ1hdSAF0_-8">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-6" target="RgMGi3w3JgoJ1hdSAF0_-8" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-6" target="RgMGi3w3JgoJ1hdSAF0_-18">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-6" target="RgMGi3w3JgoJ1hdSAF0_-18" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-6" value="Camera Links" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-6" value="Camera Links" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="640" y="190" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-8" target="RgMGi3w3JgoJ1hdSAF0_-10">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-8" target="RgMGi3w3JgoJ1hdSAF0_-10" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-8" value="No Of PLC Controller" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-8" value="No Of PLC Controller" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="640" y="310" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-10" value="For each PLC get IP address and Port No" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-10" value="For each PLC get IP address and Port No" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="640" y="440" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-12" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-12" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
           <mxGeometry x="440" y="210" width="60" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-10" target="RgMGi3w3JgoJ1hdSAF0_-12">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-10" target="RgMGi3w3JgoJ1hdSAF0_-12" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-3" target="RgMGi3w3JgoJ1hdSAF0_-12">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-3" target="RgMGi3w3JgoJ1hdSAF0_-12" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-16" value="Get the Model Link" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-16" value="Get the Model Link" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="770" y="190" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-17" value="License" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-17" value="License" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="770" y="60" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-18" value="Camera Test" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-18" value="Camera Test" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="425" y="340" width="90" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-18" target="RgMGi3w3JgoJ1hdSAF0_-12">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="RgMGi3w3JgoJ1hdSAF0_-18" target="RgMGi3w3JgoJ1hdSAF0_-12" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-21" value="Display the feeds" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-21" value="Display the feeds" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="145" y="660" width="370" height="370" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-22" value="Passing to the model and showing the JAM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-22" value="Passing to the model and showing the JAM" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="680" y="805" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-23" value="Check the Camera Feed" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-23" value="Check the Camera Feed" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="20" y="720" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-24" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-24" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="400" y="900" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-25" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-25" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="170" y="900" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-26" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-26" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="170" y="690" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-27" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+        <mxCell id="RgMGi3w3JgoJ1hdSAF0_-27" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="400" y="690" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-3" value="Users" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="-280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-4" value="Username" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="-370" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-5" value="Password" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="-450" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-6" value="UUID (0)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="-460" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-7" value="Initial (0)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="-400" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-9" value="&lt;h1&gt;Initial&lt;/h1&gt;&lt;p&gt;if 0, update the uuid, then redirect to initial page setup.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Get the four camera address along test and store in the database&lt;/p&gt;&lt;p&gt;# in the initial page get the no of cameras and PLC controller.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-310" width="220" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-10" value="Cameras" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="-880" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-11" value="Camera 1&amp;nbsp;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="170" y="-990" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-12" value="Camera 2" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="-1070" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-13" value="Camera 3" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="-1070" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-14" value="Camera 4" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="-970" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-15" value="PLC IP" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="-850" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-16" value="PLC Port" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="-750" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Y7G-U9s5TmivVinWHKGa-17" value="ping coomand&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="-1070" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

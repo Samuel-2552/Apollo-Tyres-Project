@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Live feed</title>
+     <style>
+        .enlarged {
+    transform: scale(2.3);
+    z-index: 2;
+    transition: transform 0.3s ease;
+    margin: auto;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8); /* Add a background overlay */
+}
+ .sub-containers-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; /* Adjust padding as needed */
+}
+
+.sub-container-video {
+    margin-bottom: 20px; /* Add spacing between each set of videos */
+}
+.video-player{
+    width:500px;
+    border:grey 2px solid;
+    padding:40px;
+    background:#e6e6e6;
+    border-radius:5px;
+}
+
+
+    </style>
+</head>
+<body>
+    <nav>
+            <a href=""><img src="{{ url_for('static', filename='assets/Apollo logo.png') }}"></a>
+            <a href=""><h1>Trench Conveyor AI Interface</h1></a>
+            <a href=""><img src="{{ url_for('static', filename='assets/REC Logo.png') }}"></a>
+    </nav>
+    <div class="sub-containers-wrapper">
+        <h4>Feed 1 and 2</h4>
+        <div class="sub-container-video">
+            <img   class="video-player" width="600" height="auto" controls src="{{ url_for('live') }}" alt="Camera Feed"></a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <img  class="video-player" width="600" height="auto" controls src="{{ url_for('live') }}" alt="Camera Feed">
+        </div>
+        <h4>Feed 3 and 4</h4>
+        <div class="sub-container-video">
+            <img   class="video-player" width="600" height="auto" controls src="{{ url_for('live') }}" alt="Camera Feed">&nbsp;&nbsp;&nbsp;&nbsp;
+            <img   class="video-player" width="600" height="auto" controls src="{{ url_for('live') }}" alt="Camera Feed">
+        </div>
+    </div>
+
+    <script>
+                const videoPlayers = document.querySelectorAll('.video-player');
+                videoPlayers.forEach(player => {
+                    player.addEventListener('click', (event) => {
+                        event.stopPropagation(); // Prevent the click from propagating to the document
+                        videoPlayers.forEach(otherPlayer => {
+                            if (otherPlayer !== player) {
+                                otherPlayer.classList.remove('enlarged');
+                            }
+                        });
+                        player.classList.toggle('enlarged');
+                    });
+                });
+
+                // Attach a click event listener to the document
+                document.addEventListener('click', () => {
+                    videoPlayers.forEach(player => {
+                        player.classList.remove('enlarged');
+                    });
+                });
+    </script>
+
+</body>
+</html>

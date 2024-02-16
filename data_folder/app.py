@@ -1,5 +1,5 @@
 import cv2
-from ultralytics import YOLO
+# from ultralytics import YOLO
 from flask import Flask, render_template, request, redirect, Response
 
 app = Flask(__name__)
@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Placeholder for the password (you can implement a more secure solution)
 PASSWORD = "1234"
 
-model = YOLO('data_folder/static/assets/yolo_125epochs.pt')
+# model = YOLO('data_folder/static/assets/yolo_125epochs.pt')
 # OpenCV VideoCapture object to access the camera
 camera = cv2.VideoCapture(2)  # Use '0' for the default camera, change to other numbers for different cameras if available
 

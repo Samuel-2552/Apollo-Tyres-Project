@@ -201,13 +201,15 @@ def check_uuid_and_initial_state(uuid):
     if user_data is None:
         # If UUID not found, add it to the table with initial_state as 0
         add_uuid_to_users(uuid)
-        return render_template("load.html")  # Redirect to load.html
+        return "Load"
+        #return render_template("load.html")  # Redirect to load.html
     else:
         _, initial_state = user_data
         if initial_state == 1:
-            return render_template("live_feed.html")  # Redirect to live_feed.html
+            return "Live"
+            # return render_template("live_feed.html")  # Redirect to live_feed.html
         else:
-            return render_template("load.html")  # Redirect to load.html
+            return "Load"  # Redirect to load.html
 
 def add_uuid_to_users(uuid):
     # Connect to SQLite database
@@ -257,12 +259,20 @@ def load():
     # login
     login_post(username,password)
 
+    return render_template("load.html")
+
 
 
 @app.route('/next_page')
 def next_page():
     current_uuid = get_system_id()
-    check_uuid_and_initial_state(current_uuid)
+    val= check_uuid_and_initial_state(current_uuid)
+    if val == "Load":
+        return redirect("/load")
+    elif val == "Live":
+        return render_template("live_feed.html")
+    
+
 
 @app.route('/signup_page')
 def signup_page():

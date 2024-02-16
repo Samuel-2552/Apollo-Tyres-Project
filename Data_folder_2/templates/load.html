@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .redirect-message {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .buffer-container {
+    display: flex;
+    align-items: center;
+  }
+  .buffer {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #333;
+    border-radius: 50%;
+    margin: 0 5px;
+    animation: bufferAnimation 0.8s infinite ease-in-out;
+  }
+  @keyframes bufferAnimation {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="redirect-message">
+    <h1>Redirecting...</h1>
+  </div>
+  <div class="buffer-container">
+    <div class="buffer"></div>
+    <div class="buffer"></div>
+    <div class="buffer"></div>
+  </div>
+  <script>
+    setTimeout(function(){
+      window.location.href = '/ip_setup';
+    }, 3000);
+  </script>
+</body>
+</html>

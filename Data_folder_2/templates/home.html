@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Homepage</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href=""><img src="{{ url_for('static', filename='assets/Apollo logo.png') }}"></a>
+            <a href=""><h1>Trench Conveyor AI Interface</h1></a>
+            <a href=""><img src="{{ url_for('static', filename='assets/REC Logo.png') }}"></a>
+        </nav>
+    </header>
+    <main>
+        <br><br><br>
+        <div class = "container_1">
+            <div class = "feed-1">
+                <form>
+                    <label for="address_1">Address:</label>
+                    <input type="text" id="address_1" name="address" required>
+                    <h4 id="res_1">Status: none</h4>
+
+                    <button onclick="return validate_frame(1)">Test</button>
+                </form>
+            </div>
+
+            <div class = "feed-2">
+                <form>
+                    <label for="address_2">Address:</label>
+                    <input type="text" id="address_2" name="address" required>
+                    <h4 id="res_2">Status: none</h4>
+                    <button onclick="return validate_frame(2)">Test</button>
+                </form>
+            </div>
+
+            <div class = "feed-3">
+                <form>
+                    <label for="address_3">Address:</label>
+                    <input type="text" id="address_3" name="address" required>
+                    <h4 id="res_3">Status: none</h4>
+                    <button onclick="return validate_frame(3)">Test</button>
+                </form>
+            </div>
+
+            <div class = "feed-4">
+                <form>
+                    <label for="address_4">Address:</label>
+                    <input type="text" id="address_4" name="address" required>
+                    <h4 id="res_4">Status: none</h4>
+                    <button onclick="return validate_frame(4)">Test</button>
+                </form>
+            </div>
+
+        </div>
+        <br>
+        <button id = "confirm" onclick="testing()">Proceed</button>
+
+    </main>
+    <footer>
+
+    </footer>
+</body>
+</html>

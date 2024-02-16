@@ -41,8 +41,28 @@ function sendData1(inputData, inputId,address_ret) {
 
 function testing(){
   if(tested >= 4){
-    window.location.href='/live_feed';
-  }
+    var addresses = [];
+            for (var i = 1; i <= 4; i++) {
+                var address = document.getElementById("address_" + i).value;
+                addresses.push(address);
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/live_feed", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log(xhr.responseText);
+                }
+            };
+            var data = JSON.stringify({ addresses: addresses });
+            xhr.send(data);
+
+            return window.location.href = '/live_feed'; // Prevent form submission
+
+        }
+
+
   else{
     alert("Some cameras not found!");
   }

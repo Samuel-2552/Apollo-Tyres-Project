@@ -87,7 +87,6 @@ function testing(){
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 console.log(xhr.responseText);
-                alert(01);
                 return window.location.href = '/live_feed_page';
             }
         };

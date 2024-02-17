@@ -1,6 +1,7 @@
 import subprocess
 import cv2
 import sqlite3
+import pythoncom
 import os
 import wmi as wmi
 from flask import Flask, render_template, request, redirect, Response, jsonify, send_file, url_for
@@ -54,8 +55,12 @@ def create_database_and_tables():
 
 def get_system_id():
     try:
+        # Initialize the COM library
+        pythoncom.CoInitialize()
+
         # Connect to Windows Management Instrumentation (WMI)
         c = wmi.WMI()
+
         # System UUID (Universally Unique Identifier)
         for system in c.Win32_ComputerSystemProduct():
             system_info = system.UUID
@@ -64,6 +69,10 @@ def get_system_id():
     except Exception as e:
         print(f"Error: {e}")
         system_info = "0"
+
+    finally:
+        # Uninitialize the COM library
+        pythoncom.CoUninitialize()
 
     return system_info
 
@@ -127,20 +136,28 @@ def login_post(user, password_1):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Check if the username exists in the database
-    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
-    user = cursor.fetchone()
+    try:
+        # Check if the username exists in the database
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        user_row = cursor.fetchone()
 
-    # If user exists, check password
-    if user:
-        if user['password'] == password:
-            # Passwords match, redirect to the next page
-            print("Password correct")
-            return True
+        if user:
+            user_password = user_row['password']
+            if user_password == password:
+                # Passwords match, redirect to the next page
+                print("Password correct")
+                return True
+            else:
+                return False
         else:
+            print("User not found in the database")
             return False
-    else:
-        print("Something went wrong while login!")
+    except Exception as e:
+        print("Error:", e)
+        return False
+    finally:
+        conn.close()
+
 
 
 def is_pingable(ip_address):
@@ -198,7 +215,7 @@ def check_uuid_and_initial_state(uuid, username):
     print("Checking uuid.........")
     conn = sqlite3.connect('config.db')
     cursor = conn.cursor()
-
+    print(uuid)
     # Check if UUID exists in users table
     cursor.execute('''SELECT uuid, initial_state FROM users WHERE uuid = ?''', (uuid,))
     user_data = cursor.fetchone()
@@ -241,10 +258,9 @@ def add_uuid_to_users(uuid, username):
 # creating database
 create_database_and_tables()
 
-camera = cv2.VideoCapture(0)
 
-
-def generate_frames():
+def generate_frames_1(ip):
+    camera = cv2.VideoCapture(ip)
     while True:
         success, frame = camera.read()
         if not success:
@@ -255,6 +271,81 @@ def generate_frames():
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+def generate_frames_2(ip):
+    camera = cv2.VideoCapture(ip)
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            # Convert the frame to JPEG format
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+def generate_frames_3(ip):
+    camera = cv2.VideoCapture(ip)
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            # Convert the frame to JPEG format
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+def generate_frames_4(ip):
+    camera = cv2.VideoCapture(ip)
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            # Convert the frame to JPEG format
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+def retrieve_ip(camera):
+    conn = sqlite3.connect('config.db')
+    cursor = conn.cursor()
+    if camera == 0:
+        cursor.execute("""
+                SELECT ip1  
+                FROM cameras
+                LIMIT 1
+            """)
+    elif camera == 1:
+        cursor.execute("""
+                SELECT ip2
+                FROM cameras
+                LIMIT 1
+            """)
+    elif camera == 2:
+        cursor.execute("""
+                SELECT ip3 
+                FROM cameras
+                LIMIT 1
+            """)
+    elif camera == 3:
+        cursor.execute("""
+                SELECT ip4  
+                FROM cameras
+                LIMIT 1
+            """)
+    else:
+        print("Camera limit exceed")
+
+
+    ip = cursor.fetchone()
+    print(ip)# Fetching one IP address
+    conn.close()
+    return int(ip[0]) if ip else None
 
 
 @app.route('/')
@@ -271,6 +362,7 @@ def load():
     if val_1:
         print("valid")
         current_uuid = get_system_id()
+        print(current_uuid)
         val = check_uuid_and_initial_state(current_uuid, username)
         if val == "Load":
             return render_template("load.html")
@@ -280,7 +372,7 @@ def load():
         print("invalid")
 
 #should not login
-    return render_template("load.html")
+    return "Invalid"
 
 
 @app.route('/next_page')
@@ -376,10 +468,27 @@ def live_feed_page():
     return render_template("live_feed.html")
 
 
-@app.route('/live')
-def live():
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/live_1')
+def live_1():
+    ip1 = retrieve_ip(0)
+    print(type(ip1))
+    print(ip1)
+    return Response(generate_frames_1(ip1), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/live_2')
+def live_2():
+    ip2 = retrieve_ip(1)
+    return Response(generate_frames_2(ip2), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/live_3')
+def live_3():
+    ip3 = retrieve_ip(2)
+    return Response(generate_frames_3(ip3), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/live_4')
+def live_4():
+    ip4 = retrieve_ip(3)
+    return Response(generate_frames_4(ip4), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
     app.run(debug=True)

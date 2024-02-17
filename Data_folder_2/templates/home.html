@@ -59,6 +59,18 @@
                 </form>
             </div>
 
+             <div class = "plc" style="background:black;color:white;width:100%;display:block;clear:both;margin:0 auto;text-align:center;">
+                <br>
+                 <form>
+                    <label for="address_4">PLC PORT: </label>
+                    <input type="text" id="plc_port" name="plc_port" required><br><br>
+                    <label for="address_4">PLC IP: </label>
+                    <input type="text" id="plc_ip" name="plc_ping" required><br>
+                    <h4 id="res_5" style="color:white;">Status: none</h4>
+                    <button onclick="return check_ping(event)">Test</button>
+                </form>
+                 <br>
+            </div>
         </div>
         <br>
         <button id = "confirm" onclick="testing()">Proceed</button>

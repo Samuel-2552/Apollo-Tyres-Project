@@ -3,6 +3,8 @@ import cv2
 import sqlite3
 import pythoncom
 import os
+from datetime import datetime
+from jinja2 import Template, FileSystemLoader, Environment
 import wmi as wmi
 from flask import Flask, render_template, request, redirect, Response, jsonify, send_file, url_for
 
@@ -159,7 +161,6 @@ def login_post(user, password_1):
         conn.close()
 
 
-
 def is_pingable(ip_address):
     """
     Check if an IP address is pingable or not.
@@ -237,7 +238,6 @@ def check_uuid_and_initial_state(uuid, username):
             return "Load"  # Redirect to load.html
 
 
-
 def add_uuid_to_users(uuid, username):
     # Connect to SQLite database
     print("added uuid")
@@ -252,12 +252,35 @@ def add_uuid_to_users(uuid, username):
 
     print(f"UUID '{uuid}' added to users table for username '{username}' with initial state 0.")
 
+def create_table():
+    conn = sqlite3.connect('config.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS record
+                 (camera TEXT, screenshot_location TEXT, timestamp TEXT)''')
+    conn.commit()
+    conn.close()
 
+def update_record(camera, screenshot_location):
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    conn = sqlite3.connect('config.db')
+    c = conn.cursor()
+    c.execute('''INSERT INTO record (camera, screenshot_location, timestamp)
+                 VALUES (?, ?, ?)''', (camera, screenshot_location, timestamp))
+    conn.commit()
+    conn.close()
+
+def fetch_records():
+    conn = sqlite3.connect('config.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM record")
+    records = c.fetchall()
+    conn.close()
+    return records
 # --------------------------------------------------------------------------------------------
 
 # creating database
 create_database_and_tables()
-
+create_table()
 
 def generate_frames_1(ip):
     camera = cv2.VideoCapture(ip)
@@ -272,6 +295,7 @@ def generate_frames_1(ip):
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+
 def generate_frames_2(ip):
     camera = cv2.VideoCapture(ip)
     while True:
@@ -284,6 +308,7 @@ def generate_frames_2(ip):
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
 
 def generate_frames_3(ip):
     camera = cv2.VideoCapture(ip)
@@ -298,6 +323,7 @@ def generate_frames_3(ip):
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+
 def generate_frames_4(ip):
     camera = cv2.VideoCapture(ip)
     while True:
@@ -310,6 +336,7 @@ def generate_frames_4(ip):
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
 
 def retrieve_ip(camera):
     conn = sqlite3.connect('config.db')
@@ -341,9 +368,8 @@ def retrieve_ip(camera):
     else:
         print("Camera limit exceed")
 
-
     ip = cursor.fetchone()
-    print(ip)# Fetching one IP address
+    print(ip)  # Fetching one IP address
     conn.close()
     return int(ip[0]) if ip else None
 
@@ -371,7 +397,7 @@ def load():
     else:
         print("invalid")
 
-#should not login
+    # should not login
     return "Invalid"
 
 
@@ -443,6 +469,8 @@ def pinging():
         content = file.read().strip()
 
     return content
+
+
 def redirect_template():
     return render_template('live_feed.html')
 
@@ -463,6 +491,7 @@ def live_feed():
     update_initial_state(sys_uuid, 1)
     return jsonify({'success': True})
 
+
 @app.route('/live_feed_page')
 def live_feed_page():
     return render_template("live_feed.html")
@@ -475,20 +504,32 @@ def live_1():
     print(ip1)
     return Response(generate_frames_1(ip1), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @app.route('/live_2')
 def live_2():
     ip2 = retrieve_ip(1)
     return Response(generate_frames_2(ip2), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 @app.route('/live_3')
 def live_3():
     ip3 = retrieve_ip(2)
     return Response(generate_frames_3(ip3), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @app.route('/live_4')
 def live_4():
     ip4 = retrieve_ip(3)
     return Response(generate_frames_4(ip4), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+update_record('Camera 1', '/path/to/screenshot1.png')
+update_record('Camera 2', '/path/to/screenshot2.png')
+
+@app.route('/record')
+def record():
+    records = fetch_records()
+    return render_template('record_template.html', records=records)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

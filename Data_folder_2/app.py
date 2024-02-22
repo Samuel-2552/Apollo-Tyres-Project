@@ -256,16 +256,16 @@ def create_table():
     conn = sqlite3.connect('config.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS record
-                 (camera TEXT, screenshot_location TEXT, timestamp TEXT)''')
+                 (camera TEXT, screenshot_location TEXT, timestamp TEXT,No_of_Tyres_Jammed INTEGER(20))''')
     conn.commit()
     conn.close()
 
-def update_record(camera, screenshot_location):
+def update_record(camera, screenshot_location,no_of_tyres):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     conn = sqlite3.connect('config.db')
     c = conn.cursor()
-    c.execute('''INSERT INTO record (camera, screenshot_location, timestamp)
-                 VALUES (?, ?, ?)''', (camera, screenshot_location, timestamp))
+    c.execute('''INSERT INTO record (camera, screenshot_location, timestamp, No_of_Tyres_Jammed)
+                 VALUES (?, ?, ?, ?)''', (camera, screenshot_location, timestamp, no_of_tyres))
     conn.commit()
     conn.close()
 
@@ -522,8 +522,8 @@ def live_4():
     ip4 = retrieve_ip(3)
     return Response(generate_frames_4(ip4), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-update_record('Camera 1', '/path/to/screenshot1.png')
-update_record('Camera 2', '/path/to/screenshot2.png')
+update_record('Camera 1', '/path/to/screenshot1.png',5)
+update_record('Camera 2', '/path/to/screenshot2.png',3)
 
 @app.route('/record')
 def record():

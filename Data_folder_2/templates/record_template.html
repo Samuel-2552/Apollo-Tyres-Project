@@ -28,6 +28,7 @@
                 <th>Camera</th>
                 <th>Screenshot Location</th>
                 <th>Timestamp</th>
+                <th>No of Tyres Jammed</th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +37,7 @@
                 <td>{{ record[0] }}</td>
                 <td><a href="{{ record[1] }}">{{ record[1] }}</a></td>
                 <td>{{ record[2] }}</td>
+                <td>{{ record[3] }}</td>
             </tr>
             {% endfor %}
         </tbody>

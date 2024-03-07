@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -8,6 +9,8 @@ import wmi as wmi
 import pythoncom
 import os
 # Creating database ----------------------------------------------------------------------------------------------------
+from PIL import ImageTk,Image
+
 
 def create_database_and_tables():
     # Connect to SQLite database (creates it if not exists)
@@ -181,6 +184,41 @@ def store_camera_ips(ip1, ip2, ip3, ip4, plcip, plcport):
     conn.commit()
     conn.close()
 
+def retrieve_ip(camera):
+    conn = sqlite3.connect('config.db')
+    cursor = conn.cursor()
+    if camera == 0:
+        cursor.execute("""
+                SELECT ip1  
+                FROM cameras
+                LIMIT 1
+            """)
+    elif camera == 1:
+        cursor.execute("""
+                SELECT ip2
+                FROM cameras
+                LIMIT 1
+            """)
+    elif camera == 2:
+        cursor.execute("""
+                SELECT ip3 
+                FROM cameras
+                LIMIT 1
+            """)
+    elif camera == 3:
+        cursor.execute("""
+                SELECT ip4  
+                FROM cameras
+                LIMIT 1
+            """)
+    else:
+        print("Camera limit exceed")
+
+    ip = cursor.fetchone()
+    print(ip)  # Fetching one IP address
+    conn.close()
+    return ip[0] if ip else None
+
 # ----------------------------------------------------------------------------------------------------------------------
 create_database_and_tables()
 # create_table()
@@ -188,11 +226,9 @@ create_database_and_tables()
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Navigation Example")
+        self.title("Apollo Tyres")
         self.geometry("600x400")  # Increased size
-
         self.frames = {}
-
         self.login_frame = LoginPage(self)
         self.ip_address_frame = IPAddressPage(self)
         self.welcome_frame = WelcomePage(self)
@@ -211,6 +247,7 @@ class Application(tk.Tk):
             self.login_frame.pack_forget()
             self.ip_address_frame.pack_forget()
             self.welcome_frame.pack(fill='both', expand=True)
+            self.welcome_frame.start_camera_feeds()
 
 class LoginPage(ttk.Frame):
     def __init__(self, master):
@@ -228,7 +265,6 @@ class LoginPage(ttk.Frame):
         password_label.pack()
         self.password_entry = ttk.Entry(self, show="*")
         self.password_entry.pack()
-
         self.login_button = ttk.Button(self, text="Login", command=self.handle_login)
         self.login_button.pack(pady=10)
 
@@ -310,7 +346,7 @@ class IPAddressPage(ttk.Frame):
                 sys_uuid = get_system_id()
                 update_initial_state(sys_uuid, 1)
 
-            self.master.show_frame("welcome")
+                self.master.show_frame("welcome")
         else:
             messagebox.showerror("IP Failed", "Check the ip address")
 
@@ -355,11 +391,62 @@ class IPAddressPage(ttk.Frame):
 class WelcomePage(ttk.Frame):
     def __init__(self, master):
         super().__init__(master)
-        label = ttk.Label(self, text="Live feed", font=('Helvetica', 16))  # Increased font size
-        label.pack(pady=10)
+        self.master = master
 
-        welcome_label = ttk.Label(self, text="Welcome!", font=('Helvetica', 12))  # Increased font size
-        welcome_label.pack(pady=10)
+        label = ttk.Label(self, text="Live feed", font=('Helvetica', 16))
+        label.grid(row=0, column=0, pady=10)
+
+        self.frame = tk.Frame(self)
+        self.frame.grid(row=1, column=0, padx=10, pady=10)
+
+        # Create a list to store labels
+        self.labels = []
+
+        # Get list of video files
+        ip1 = retrieve_ip(0)
+        ip2 = retrieve_ip(1)
+        ip3 = retrieve_ip(2)
+        ip4 = retrieve_ip(3)
+        video_files = [ip1, ip2, ip3, ip4]
+
+        # Create OpenCV video capture objects for each camera feed
+        capture_objects = [cv2.VideoCapture(file) for file in video_files]
+
+        # Create labels for each camera feed and add them to the list
+        for i, cap in enumerate(capture_objects):
+            label = tk.Label(self.frame)
+            label.grid(row=i // 2, column=i % 2, padx=5, pady=5)
+            self.labels.append(label)
+
+        # Start threads to update each camera feed
+        self.start_camera_feeds(capture_objects)
+
+    def start_camera_feeds(self, capture_objects):
+        for label, cap in zip(self.labels, capture_objects):
+            t = threading.Thread(target=self.update_image, args=(label, cap))
+            t.daemon = True
+            t.start()
+
+    def update_image(self, label, cap):
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("Error reading frame from video source")
+                break
+            # Resize the frame to fit the label
+            frame = cv2.resize(frame, (750, 350))  # Adjust dimensions as needed
+            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(img)
+            img = ImageTk.PhotoImage(image=img)
+            label.config(image=img)
+            label.image = img
+        # def live_feed():
+        #     ip1 = retrieve_ip(0)
+        #     ip2 = retrieve_ip(1)
+        #     ip3 = retrieve_ip(2)
+        #     ip4 = retrieve_ip(3)
+        #
+        # live_feed()
 
 if __name__ == "__main__":
     app = Application()

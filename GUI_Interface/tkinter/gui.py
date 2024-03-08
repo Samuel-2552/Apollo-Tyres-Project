@@ -8,8 +8,11 @@ import self as self
 import wmi as wmi
 import pythoncom
 import os
-# Creating database ----------------------------------------------------------------------------------------------------
+from datetime import datetime
 from PIL import ImageTk,Image
+from tkcalendar import DateEntry
+# Creating database ----------------------------------------------------------------------------------------------------
+
 
 
 def create_database_and_tables():
@@ -48,16 +51,31 @@ def create_database_and_tables():
                         )''')
 
     # Commit changes and close connection
+    cursor.execute('''CREATE TABLE IF NOT EXISTS records
+                      (id INTEGER PRIMARY KEY,
+                       camera TEXT,
+                       screenshot_location TEXT,
+                       timestamp TEXT,
+                       No_of_Tyres_Jammed INTEGER(20))''')
+
+
     conn.commit()
     conn.close()
 
-# def create_table():
-#     conn = sqlite3.connect('config.db')
-#     c = conn.cursor()
-#     c.execute('''CREATE TABLE IF NOT EXISTS record
-#                  (camera TEXT, screenshot_location TEXT, timestamp TEXT,No_of_Tyres_Jammed INTEGER(20))''')
-#     conn.commit()
-#     conn.close()
+def create_table():
+    conn = sqlite3.connect('config.db')
+    cursor = conn.cursor()
+    cursor.execute('''INSERT INTO records (camera, screenshot_location, timestamp, No_of_Tyres_Jammed)
+                      VALUES ('Camera 1', 'location1.jpg', '2024-03-08 10:00:00', 3)''')
+    cursor.execute('''INSERT INTO records (camera, screenshot_location, timestamp, No_of_Tyres_Jammed)
+                      VALUES ('Camera 2', 'location2.jpg', '2024-03-08 10:05:00', 2)''')
+    cursor.execute('''INSERT INTO records (camera, screenshot_location, timestamp, No_of_Tyres_Jammed)
+                      VALUES ('Camera 3', 'location3.jpg', '2024-03-08 10:10:00', 1)''')
+    cursor.execute('''INSERT INTO records (camera, screenshot_location, timestamp, No_of_Tyres_Jammed)
+                      VALUES ('Camera 4', 'location4.jpg', '2024-03-08 10:15:00', 4)''')
+
+    conn.commit()
+    conn.close()
 
 def get_db_connection():
     conn = sqlite3.connect('config.db')
@@ -221,7 +239,7 @@ def retrieve_ip(camera):
 
 # ----------------------------------------------------------------------------------------------------------------------
 create_database_and_tables()
-# create_table()
+create_table()
 
 class Application(tk.Tk):
     def __init__(self):
@@ -232,6 +250,7 @@ class Application(tk.Tk):
         self.login_frame = LoginPage(self)
         self.ip_address_frame = IPAddressPage(self)
         self.welcome_frame = WelcomePage(self)
+        self.records_frame = RecordsPage(self)
         self.show_frame("login")
 
     def show_frame(self, frame_name):
@@ -248,6 +267,12 @@ class Application(tk.Tk):
             self.ip_address_frame.pack_forget()
             self.welcome_frame.pack(fill='both', expand=True)
             self.welcome_frame.start_camera_feeds()
+        elif frame_name == "records":
+            self.login_frame.pack_forget()
+            self.ip_address_frame.pack_forget()
+            self.welcome_frame.pack_forget()
+            self.records_frame.pack(fill='both', expand=True)
+
 
 class LoginPage(ttk.Frame):
     def __init__(self, master):
@@ -358,7 +383,7 @@ class IPAddressPage(ttk.Frame):
         if not self.list:
             self.list = [""] * 4
 
-        camera_url = int(ip_address)
+        camera_url = ip_address
         cap = cv2.VideoCapture(camera_url)
         print(self.count)
 
@@ -396,11 +421,19 @@ class WelcomePage(ttk.Frame):
         label = ttk.Label(self, text="Live feed", font=('Helvetica', 16))
         label.grid(row=0, column=0, pady=10)
 
-        self.frame = tk.Frame(self)
-        self.frame.grid(row=1, column=0, padx=10, pady=10)
+        # Create a navigation bar frame
+        self.nav_bar = tk.Frame(self)
+        self.nav_bar.grid(row=0, column=1, padx=10, pady=10)
 
-        # Create a list to store labels
-        self.labels = []
+        # Add "Show Records" button to the navigation bar
+        self.show_records_button = ttk.Button(self.nav_bar, text="Show Records", command=self.show_records)
+        self.show_records_button.grid(row=0, column=0, pady=10)
+
+        self.frame = tk.Frame(self)
+        self.frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+
+        # Remove the label from the grid
+        self.labels = []  # Clear the labels list
 
         # Get list of video files
         ip1 = retrieve_ip(0)
@@ -421,6 +454,7 @@ class WelcomePage(ttk.Frame):
         # Start threads to update each camera feed
         self.start_camera_feeds(capture_objects)
 
+
     def start_camera_feeds(self, capture_objects):
         for label, cap in zip(self.labels, capture_objects):
             t = threading.Thread(target=self.update_image, args=(label, cap))
@@ -440,13 +474,108 @@ class WelcomePage(ttk.Frame):
             img = ImageTk.PhotoImage(image=img)
             label.config(image=img)
             label.image = img
-        # def live_feed():
-        #     ip1 = retrieve_ip(0)
-        #     ip2 = retrieve_ip(1)
-        #     ip3 = retrieve_ip(2)
-        #     ip4 = retrieve_ip(3)
-        #
-        # live_feed()
+
+    def show_records(self):
+        self.master.show_frame("records")
+
+
+# Import DateEntry widget from tkcalendar module
+
+class RecordsPage(ttk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        label = ttk.Label(self, text="Records", font=('Helvetica', 16))
+        label.grid(row=0, column=0, pady=10, columnspan=3)
+
+        # Create a treeview widget to display records
+        self.tree = ttk.Treeview(self, columns=("Camera", "Screenshot Location", "Timestamp", "No. of Tyres Jammed"))
+        self.tree.grid(row=1, column=0, columnspan=3, sticky="nsew")
+
+        # Add column headings
+        self.tree.heading("#0", text="ID")
+        self.tree.heading("Camera", text="Camera")
+        self.tree.heading("Screenshot Location", text="Screenshot Location")
+        self.tree.heading("Timestamp", text="Timestamp")
+        self.tree.heading("No. of Tyres Jammed", text="No. of Tyres Jammed")
+
+        # Add vertical scrollbar
+        vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
+        vsb.grid(row=1, column=3, sticky="ns")
+        self.tree.configure(yscrollcommand=vsb.set)
+
+        # Add filter button
+        self.filter_button = ttk.Button(self, text="Filter", command=self.filter_records)
+        self.filter_button.grid(row=2, column=0, pady=10)
+
+        # Create a Combobox for selecting filter criteria
+        self.filter_criteria = ttk.Combobox(self, values=["Date", "Month", "Camera"])
+        self.filter_criteria.grid(row=2, column=1, pady=10)
+        self.filter_criteria.set("Date")  # Set default value
+
+        # Create a DateEntry widget for selecting date
+        self.date_entry = DateEntry(self, width=12, background='darkblue', foreground='white', borderwidth=2)
+        self.date_entry.grid(row=2, column=2, pady=10)
+        self.date_entry.grid_remove()  # Hide initially
+
+        # Create a Combobox for selecting camera
+        self.camera_combobox = ttk.Combobox(self, values=["Camera 1", "Camera 2", "Camera 3", "Camera 4"])
+        self.camera_combobox.grid(row=2, column=2, pady=10)
+        self.camera_combobox.grid_remove()  # Hide initially
+
+        # Toggle visibility of DateEntry or Combobox based on selected filter criteria
+        self.filter_criteria.bind("<<ComboboxSelected>>", self.toggle_filter_options)
+
+    def toggle_filter_options(self, event):
+        # Get the selected filter criteria
+        filter_criteria = self.filter_criteria.get()
+
+        # Toggle visibility of DateEntry or Combobox based on selected filter criteria
+        if filter_criteria == "Date":
+            self.date_entry.grid()
+            self.camera_combobox.grid_remove()
+        elif filter_criteria == "Month":
+            self.date_entry.grid()
+            self.camera_combobox.grid_remove()
+        elif filter_criteria == "Camera":
+            self.camera_combobox.grid()
+            self.date_entry.grid_remove()
+
+    def filter_records(self):
+        # Get the selected filter criteria
+        filter_criteria = self.filter_criteria.get()
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Retrieve records from the database based on the selected filter criteria
+        if filter_criteria == "Date":
+            selected_date = self.date_entry.get_date().strftime("%Y-%m-%d")
+            cursor.execute("SELECT * FROM records WHERE DATE(timestamp) = ?", (selected_date,))
+        elif filter_criteria == "Month":
+            selected_month = self.date_entry.get_date().strftime("%Y-%m")
+            cursor.execute("SELECT * FROM records WHERE strftime('%Y-%m', timestamp) = ?", (selected_month,))
+        elif filter_criteria == "Camera":
+            selected_camera = int(self.camera_combobox.get().split()[1])
+            cursor.execute("SELECT * FROM records WHERE camera = ?", (f"Camera {selected_camera}",))
+
+        records = cursor.fetchall()
+
+        # Clear existing items in the treeview
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Insert filtered records into the treeview
+        for record in records:
+            self.tree.insert("", "end", text=record[0], values=(record[1], record[2], record[3], record[4]))
+
+        conn.close()
+
+
+        # Add a button to show records
+
+
+
 
 if __name__ == "__main__":
     app = Application()

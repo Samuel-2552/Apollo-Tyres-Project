@@ -4,14 +4,18 @@ from tkinter import ttk
 from tkinter import messagebox
 import sqlite3
 import cv2
-import self as self
 import wmi as wmi
 import pythoncom
 import os
 from datetime import datetime
 from PIL import ImageTk,Image
 from tkcalendar import DateEntry
+from ultralytics import YOLO
+import time
 # Creating database ----------------------------------------------------------------------------------------------------
+
+
+
 
 
 
@@ -245,7 +249,7 @@ class Application(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Apollo Tyres")
-        self.geometry("600x400")  # Increased size
+        self.geometry("3840x2160")  # Increased size
         self.frames = {}
         self.login_frame = LoginPage(self)
         self.ip_address_frame = IPAddressPage(self)
@@ -412,7 +416,140 @@ class IPAddressPage(ttk.Frame):
         else:
             print("Database couldn't be read")
 
+class Detection:
+    def __init__(self,video_path):
+        self.model = YOLO("best (3).pt")
+        self.jam_confirmed_count = 0
+        self.id_check_time = 5
+        self.jam_check_time = 30
+        self.jam_confirm_time = 60
+        self.id_confirm_time = 30
+        self.tyre_management = {}
+        self.jam_management = {}
+        self.id_management = {}
+        self.last_frame = []
+        self.tracking_line = [0, 100, 200, 300, 400, 500, 600, 700, 800]
+        self.frame_number = None
+        self.cap = cv2.VideoCapture(video_path)
+        self.fps = self.cap.get(cv2.CAP_PROP_FPS)
 
+    def create_capture(self,video_path):
+        self.cap = cv2.VideoCapture(video_path)
+        return self.cap
+
+    def delete_id(self, id):
+        if id in self.id_management:
+            del self.id_management[id]
+
+    def delete_jam(self,id):
+        if id in self.jam_management:
+            del self.jam_management[id]
+
+    def delete_tyre(self,id):
+        del self.tyre_management[id]
+        self.delete_id(id)
+        self.delete_jam(id)
+
+    def jam_manager(self,current_time):
+    #if jam detected, insert the id in the jam management
+        for i in self.tyre_management:
+            if self.tyre_management[i]['is jam detected']:
+                self.jam_management[i] = {}
+                self.jam_management[i]['time when jam detected'] = current_time
+                self.jam_management[i]['is jam confirmed'] = False
+    #if any jam is persisted more than 1 minute, then confirm the jam and incremented the jam count
+        for i in self.jam_management:
+            if current_time - self.jam_management[i]['time when jam detected'] > self.jam_confirm_time:
+                self.jam_management[i]['is jam confirmed'] = True
+                self.jam_confirmed_count += 1
+
+        if self.jam_confirmed_count > 2:
+            print("Signal")
+
+    def id_manager(self,current_time):
+        #for removing the false detected id and unused id
+    #get the the currently stored id's
+    #current_frame_ids is the ids detected in the current frame or iteration
+    #if any stored id is not present in the current frame id, then insert the id in the id management with time
+        if self.frame_number % (int(self.fps) * self.id_check_time) == 0:
+            currently_stored_ids = list(self.tyre_management.keys())
+            for i in currently_stored_ids:
+                if i not in self.current_frame_ids:
+                    self.tyre_management[i]['is id present in the current frame'] = False
+                    self.id_management[i] = {}
+                    self.id_management[i]['time when id disappeared'] = current_time
+                    self.delete_jam(i)
+                else:
+                    if not self.tyre_management[i]['is id present in the current frame']:
+                        self.tyre_management[i]['is id present in the current frame'] = True
+                        self.delete_id(i)
+        self.id_manager_deletion(current_time)
+
+    def id_manager_deletion(self,current_time):
+    #if id is not present for more than 1 min, remove the id  from the id and tyre management
+        id_to_be_removed = []
+        for i in self.id_management:
+            if current_time - self.id_management[i]['time when id disappeared'] > self.id_confirm_time:
+                id_to_be_removed.append(i)
+        for i in id_to_be_removed:
+            self.delete_tyre(i)
+
+    def detect(self,frame):
+        results = self.model.track(frame, persist=True)
+
+        for pos in self.tracking_line:
+            cv2.line(frame, (0, pos), (frame.shape[1], pos), (0, 255, 0), 2)
+        current_time = time.time()
+
+        self.frame_number = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+        for result in results:
+            if result.boxes.id == None:
+                return frame
+            self.current_frame_ids = result.boxes.id.tolist()
+            for box in result.boxes:
+                box_id = str(box.id.tolist()[0])
+                box_coords = box.xyxy.tolist()
+                center_x = int((box_coords[0][0] + box_coords[0][2]) / 2)
+                center_y = int((box_coords[0][1] + box_coords[0][3]) / 2)
+                cv2.putText(frame, box_id, (center_x, center_y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                cv2.rectangle(frame, (int(box_coords[0][0]), int(box_coords[0][1])),
+                                            (int(box_coords[0][2]), int(box_coords[0][3])), (0, 255, 0), 1)
+                #if box_id is already detected and present in the tyre managemet
+                if box_id in self.tyre_management:
+                    #if box has crossed the last tracking line, then del the id
+                    if box_coords[0][1] > self.tracking_line[-1]:
+                        self.delete_tyre(box_id)
+                        continue
+                    #if box has crossed the upcoming tracking line, then change the next line to be crossed and the time
+                    if self.tyre_management[box_id]['next line to cross'] < box_coords[0][1]:
+                        idx = self.tracking_line.index(self.tyre_management[box_id]['next line to cross'])
+                        self.tyre_management[box_id]['next line to cross'] = self.tracking_line[idx + 1]
+                        self.tyre_management[box_id]['time when the tyre cross the line'] = current_time
+                        if self.tyre_management[box_id]['is jam detected']:
+                            self.tyre_management[box_id]['is jam detected'] = False
+                            self.delete_jam(box_id)
+                    else:
+                        if current_time - self.tyre_management[box_id]['time when the tyre cross the line'] > self.jam_check_time:
+                            cv2.rectangle(frame, (int(box_coords[0][0]), int(box_coords[0][1])),
+                                                (int(box_coords[0][2]), int(box_coords[0][3])), (0, 0, 255), 1)
+                            if not self.tyre_management[box_id]['is jam detected']:
+                                self.tyre_management[box_id]['is jam detected'] = True
+                else:
+                    for pos in self.tracking_line:
+                        if box_coords[0][1] < pos:
+                            self.tyre_management[box_id] = {}
+                            self.tyre_management[box_id]['next line to cross'] = pos
+                            self.tyre_management[box_id]['time when the tyre cross the line'] = current_time
+                            self.tyre_management[box_id]['is jam detected'] = False
+                            self.tyre_management[box_id]['is id present in the current frame'] = True
+                            break
+#fake detection also comes under the jam , if it comes to id, then jam should delete
+#backup the data if any error occured and initialize
+            self.jam_manager(current_time)
+            self.id_manager(current_time)
+        return frame
+        
 class WelcomePage(ttk.Frame):
     def __init__(self, master):
         super().__init__(master)
@@ -443,16 +580,13 @@ class WelcomePage(ttk.Frame):
         video_files = [ip1, ip2, ip3, ip4]
 
         # Create OpenCV video capture objects for each camera feed
-        self.capture_objects = [cv2.VideoCapture(file) for file in video_files]
+        self.capture_objects = [Detection(video_path) for video_path in video_files]
 
         # Create labels for each camera feed and add them to the list
         for i, cap in enumerate(self.capture_objects):
             label = tk.Label(self.frame)
             label.grid(row=i // 2, column=i % 2, padx=5, pady=5)
             self.labels.append(label)
-
-        # Start threads to update each camera feed
-
 
     def start_camera_feeds(self):
         for label, cap in zip(self.labels, self.capture_objects):
@@ -462,17 +596,18 @@ class WelcomePage(ttk.Frame):
 
     def update_image(self, label, cap):
         while True:
-            ret, frame = cap.read()
+            ret, frame = cap.cap.read()
             if not ret:
                 print("Error reading frame from video source")
                 break
-            # Resize the frame to fit the label
-            frame = cv2.resize(frame, (750, 350))  # Adjust dimensions as needed
+            frame = cap.detect(frame)
+            frame = cv2.resize(frame, (800, 500))  # Adjust dimensions as needed
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(img)
             img = ImageTk.PhotoImage(image=img)
             label.config(image=img)
             label.image = img
+        pass
 
     def show_records(self):
         self.master.show_frame("records")

@@ -443,20 +443,19 @@ class WelcomePage(ttk.Frame):
         video_files = [ip1, ip2, ip3, ip4]
 
         # Create OpenCV video capture objects for each camera feed
-        capture_objects = [cv2.VideoCapture(file) for file in video_files]
+        self.capture_objects = [cv2.VideoCapture(file) for file in video_files]
 
         # Create labels for each camera feed and add them to the list
-        for i, cap in enumerate(capture_objects):
+        for i, cap in enumerate(self.capture_objects):
             label = tk.Label(self.frame)
             label.grid(row=i // 2, column=i % 2, padx=5, pady=5)
             self.labels.append(label)
 
         # Start threads to update each camera feed
-        self.start_camera_feeds(capture_objects)
 
 
-    def start_camera_feeds(self, capture_objects):
-        for label, cap in zip(self.labels, capture_objects):
+    def start_camera_feeds(self):
+        for label, cap in zip(self.labels, self.capture_objects):
             t = threading.Thread(target=self.update_image, args=(label, cap))
             t.daemon = True
             t.start()

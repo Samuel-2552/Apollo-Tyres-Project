@@ -256,8 +256,8 @@ class Detection:
         self.jam_management = {}
         self.id_management = {}
         self.last_frame = []
-        self.tracking_lineFront = [0, 25, 75, 150, 350, 400, 500, 650, 850, 1000]
-        self.tracking_lineBack = [1000, 800, 600, 450, 300, 150, 50, 0]
+        self.tracking_lineFront = [0, 25, 75, 150, 200, 300, 450, 650, 850, 1050]
+        self.tracking_lineBack = [1000, 800, 600, 450, 300, 150]
         self.frame_number = None
         self.cap = cv2.VideoCapture(video_path)
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)

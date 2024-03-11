@@ -713,7 +713,7 @@ class WelcomePage(ttk.Frame):
 
     def start_camera_feeds(self):
         for label, cap, model in zip(self.labels, self.capture_objects, [1, 2, 3, 4]):
-            t = threading.Thread(target=self.update_image, args=(label, cap))
+            t = threading.Thread(target=self.update_image, args=(label, cap, model))
             t.daemon = True
             t.start()
 

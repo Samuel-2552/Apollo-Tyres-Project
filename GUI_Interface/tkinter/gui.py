@@ -257,7 +257,7 @@ class Detection:
         self.id_management = {}
         self.last_frame = []
         self.tracking_lineFront = [0, 25, 75, 150, 350, 400, 500, 650, 850, 1000]
-        self.tracking_lineBack = [1000, 800, 650, 500, 300, 150, 50, 0]
+        self.tracking_lineBack = [1000, 800, 600, 450, 300, 150, 50, 0]
         self.frame_number = None
         self.cap = cv2.VideoCapture(video_path)
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)
@@ -352,11 +352,11 @@ class Detection:
                 #if box_id is already detected and present in the tyre managemet
                 if box_id in self.tyre_management:
                     #if box has crossed the last tracking line, then del the id
-                    if box_coords[0][1] > self.tracking_lineBack[-1]:
+                    if box_coords[0][1] < self.tracking_lineBack[-1]:
                         self.delete_tyre(box_id)
                         continue
                     #if box has crossed the upcoming tracking line, then change the next line to be crossed and the time
-                    if self.tyre_management[box_id]['next line to cross'] > box_coords[0][1]:
+                    if self.tyre_management[box_id]['next line to cross'] > box_coords[0][3]:
                         idx = self.tracking_lineBack.index(self.tyre_management[box_id]['next line to cross'])
                         self.tyre_management[box_id]['next line to cross'] = self.tracking_lineBack[idx + 1]
                         self.tyre_management[box_id]['time when the tyre cross the line'] = current_time
@@ -371,7 +371,7 @@ class Detection:
                                 self.tyre_management[box_id]['is jam detected'] = True
                 else:
                     for pos in self.tracking_lineBack:
-                        if box_coords[0][1] > pos:
+                        if box_coords[0][3] > pos:
                             self.tyre_management[box_id] = {}
                             self.tyre_management[box_id]['next line to cross'] = pos
                             self.tyre_management[box_id]['time when the tyre cross the line'] = current_time
@@ -446,17 +446,14 @@ class Application(tk.Tk):
         self.title("Apollo Tyres")
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-
         # Calculate the frame size based on screen resolution
         frame_width = int(screen_width)  # 80% of screen width
         frame_height = int(screen_height)  # 80% of screen height
-
         print(frame_height)
         print(frame_width)
         # Calculate the x and y coordinates to center the window
         x_coordinate = (screen_width - frame_width) // 2
         y_coordinate = (screen_height - frame_height) // 2
-
         # Set the geometry of the main window and align it to the center
         self.geometry(f"{frame_width}x{frame_height}+{x_coordinate}+{y_coordinate}")
         self.frames = {}
@@ -465,7 +462,6 @@ class Application(tk.Tk):
         self.welcome_frame = WelcomePage(self)
         #self.records_frame = RecordsPage(self)
         self.show_frame("login")
-
     def show_frame(self, frame_name):
         if frame_name == "login":
             self.login_frame.pack(fill='both', expand=True)

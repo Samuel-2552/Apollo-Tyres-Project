@@ -3,42 +3,61 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
 import cv2
+import subprocess
+
+import tkinter as tk
+from tkinter import ttk, messagebox
+import sqlite3
+import cv2
+import ctypes
 
 class LoginPage(ttk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
-        self.master.title("Login Page")
-
+        self.master.title("Configuration")
         self.username = "Apollo"  # Hardcoded username
         self.password = "ap0110"  # Hardcoded password
 
         self.create_widgets()
 
     def create_widgets(self):
-        label_username = ttk.Label(self, text="Username:")
-        label_username.grid(row=0, column=0, padx=5, pady=5)
+        height = self.winfo_screenheight()
+        const1 = int(height/33.23) #26
+        const2 = int(height/8.64) #100
+        const3 = int(height/43.2) #20
+        const4 = int(height/54) #16
+        const5 = int(height/21.6) #40
 
-        self.entry_username = ttk.Entry(self)
-        self.entry_username.grid(row=0, column=1, padx=5, pady=5)
+        # print(const1,const2,const3,const4,const5)
 
-        label_password = ttk.Label(self, text="Password:")
-        label_password.grid(row=1, column=0, padx=5, pady=5)
+        label = ttk.Label(self, text="Login to Configure", font=('Times New Roman',const1))  # Increased font size
+        label.pack(pady=(const2, const3))  # Increased top padding
 
-        self.entry_password = ttk.Entry(self, show="*")
-        self.entry_password.grid(row=1, column=1, padx=5, pady=5)
+        username_label = ttk.Label(self, text="Username:", font=('Times New Roman', const4))  # Increased font size
+        username_label.pack()
+        self.username_entry = ttk.Entry(self, font=('Times New Roman', const4))  # Increased font size
+        self.username_entry.pack()
 
-        login_button = ttk.Button(self, text="Login", command=self.handle_login)
-        login_button.grid(row=2, column=0, columnspan=2, pady=10)
+        password_label = ttk.Label(self, text="Password:", font=('Times New Roman', const4))  # Increased font size
+        password_label.pack()
+        self.password_entry = ttk.Entry(self, show="*", font=('Times New Roman', const4))  # Increased font size
+        self.password_entry.pack()
+
+        self.login_button = ttk.Button(self, text="Login", command=self.handle_login, style='Login.TButton' , width=14,)
+        self.login_button.pack(pady=(const3, const5))
+        button_font = ("Arial", const4)
+        style = ttk.Style()
+        style.configure('Login.TButton', font=button_font)
 
     def handle_login(self):
-        entered_username = self.entry_username.get()
-        entered_password = self.entry_password.get()
+        username = self.username_entry.get()
+        password = self.password_entry.get()
 
-        print("Entered Username:", entered_username)
-        print("Entered Password:", entered_password)
+        print("Entered Username:", username)
+        print("Entered Password:", password)
 
-        if entered_username == self.username and entered_password == self.password:
+        if username == self.username and password == self.password:
             print("Login successful")
             self.destroy()  # Hide the login page
             ip_address_page = IPAddressPage(self.master)
@@ -53,36 +72,96 @@ class IPAddressPage(ttk.Frame):
         self.count = 0  # Initialize count attribute
         self.list = []
         self.list_plc = []
-        label = ttk.Label(self, text="IP Address Page", font=('Helvetica', 16))  # Increased font size
-        label.pack(pady=10)
+        self.ip_status = [0,0,0,0,1,1]
+        height = self.winfo_screenheight()
+        const1 = int(height / 72)  # 12
+        const3 = int(height / 43.2)  # 20
+        const2 = int(height / 57.6)  # 15
+        const4 = int(height / 54) 
 
+        label = ttk.Label(self, text="Configuration", font=('Helvetica', const3))  # Increased font size
+        label.pack(pady=10)
+        
         ip_frame = ttk.Frame(self)
         ip_frame.pack(pady=10)
 
-        ip_labels = ["IP Address 1:", "IP Address 2:", "IP Address 3:", "IP Address 4:"]
+        ip_labels = ["IP Address 1:", "IP Address 2:", "IP Address 3:", "IP Address 4:","PLC_IP:","Jam_Check_Time: "]
         self.ip_entries = []
         self.success_labels = []  # Store success labels
 
-        for i in range(4):
-            ip_label = ttk.Label(ip_frame, text=ip_labels[i])
-            ip_label.grid(row=i, column=0, padx=5, pady=5)
+        for i in range(6):
+            ip_label = ttk.Label(ip_frame, text=ip_labels[i],font=("Times New Roman",const1))
+            ip_label.grid(row=i, column=0, padx=const1, pady=const1)
 
-            ip_entry = ttk.Entry(ip_frame)
-            ip_entry.grid(row=i, column=1, padx=5, pady=5)
+            ip_entry = ttk.Entry(ip_frame,font=('Helvetica', const4), width=const3)
+            ip_entry.grid(row=i, column=1, padx=const1, pady=const1)
             self.ip_entries.append(ip_entry)
 
-            test_button = ttk.Button(ip_frame, text="Test", command=lambda i=i: self.handle_test(i))
-            test_button.grid(row=i, column=2, padx=5, pady=5)
+            if i < 4:
+                test_button = ttk.Button(ip_frame, text="Test",width=const2,style="test.TButton",command=lambda i=i: self.handle_test(i))
+                test_button.grid(row=i, column=2, padx=const1, pady=const1)
+                button_font = ("Times New Roman", const1)
+                style = ttk.Style()
+                style.configure('test.TButton', font=button_font)
+
+                update_button = ttk.Button(ip_frame, text="UPDATE",width=const2,style="update.TButton", command=lambda i=i: self.update_ips(i))
+                update_button.grid(row=i, column=4, padx=const1, pady=const1)
+                button_font = ("Times New Roman", const1)
+                style = ttk.Style()
+                style.configure('update.TButton', font=button_font)
+                
+            elif i == 4: 
+                test_button = ttk.Button(ip_frame, text="Test",width=const2,style="test.TButton", command=lambda i=i: self.handle_plc(i))
+                test_button.grid(row=i, column=2, padx=const1, pady=const1)
+                button_font = ("Times New Roman", const1)
+                style = ttk.Style()
+                style.configure('test.TButton', font=button_font)
+
+                update_button = ttk.Button(ip_frame, text="UPDATE",width=const2,style="update.TButton", command=lambda i=i: self.update_ips(i))
+                update_button.grid(row=i, column=4, padx=const1, pady=const1)
+                button_font = ("Times New Roman", const1)
+                style = ttk.Style()
+                style.configure('update.TButton', font=button_font)
+            else:
+                update_button = ttk.Button(ip_frame, text="UPDATE",width=const2,style="update.TButton", command=lambda i=i: self.update_ips(i))
+                update_button.grid(row=i, column=2, padx=const1, pady=const1)
+                button_font = ("Times New Roman", const1)
+                style = ttk.Style()
+                style.configure('update.TButton', font=button_font)
 
             # Create and pack success labels initially empty
-            success_label = ttk.Label(ip_frame, text="")
-            success_label.grid(row=i, column=3, padx=5, pady=5)
+            success_label = ttk.Label(ip_frame, text="",font=const1)
+            success_label.grid(row=i, column=3, padx=const2, pady=const2)
             self.success_labels.append(success_label)
 
-        # Display success message
-        self.proceed_button = ttk.Button(self, text="Update", command=self.handle_update)
-        self.proceed_button.pack(pady=10)
+        # Set the size of the frame to occupy the center of the screen
+        self.grid(row=0, column=0, sticky="nsew", padx=200, pady=100)
+        self.master.grid_rowconfigure(0, weight=1)
+        self.master.grid_columnconfigure(0, weight=1)
 
+    def update_ips(self,index):
+        if self.ip_status[index] == 1:
+            ip = self.ip_entries[index].get()
+            conn = sqlite3.connect("config.db")
+            cursor = conn.cursor()
+            if index < 4:
+                respective_ip = int(index+1)
+                cursor.execute("UPDATE cameras SET ip{}=? WHERE id=1".format(respective_ip),
+                                    (ip,))
+                messagebox.showinfo("Updated Successful", "IP addresses updated successfully.")
+            elif index == 4:
+                cursor.execute("UPDATE cameras SET plcip=? WHERE id=1",
+                                    (ip,))
+                messagebox.showinfo("Updated Successful", "IP addresses updated successfully.")
+            else:
+                cursor.execute("UPDATE cameras SET jam_check_time=? WHERE id=1",
+                                    (ip,))
+                messagebox.showinfo("Updated Successful", "Jam checking time updated successfully.")
+            conn.commit()
+            conn.close()
+           
+        else:
+            messagebox.showerror("IP Failed", "Recheck the IP")
     def handle_update(self):
         # Connect to the database
         if self.count >= 4:
@@ -91,11 +170,11 @@ class IPAddressPage(ttk.Frame):
                 cursor = conn.cursor()
                 # Get the IP addresses from the entries
                 ip_addresses = [entry.get() for entry in self.ip_entries]
-                plcip = "172.16.248"  # Hardcoded plcip
+                plcip =  self.ip_entries[-1].get()  
                 plcport = 5000  # Hardcoded plcport
                 # Update the first row of the cameras table with the IP addresses
                 cursor.execute("UPDATE cameras SET ip1=?, ip2=?, ip3=?, ip4=?, plcip=?, plcport=? WHERE id=1",
-                               (*ip_addresses, plcip, plcport))
+                               (*ip_addresses, plcport))
 
                 conn.commit()
                 conn.close()
@@ -107,10 +186,8 @@ class IPAddressPage(ttk.Frame):
 
     def handle_plc(self, index):
         plc = self.ip_entries[index].get()
-        self.list_plc.append(plc)
-        print(self.list)
         print(plc)
-        self.success_labels[index].config(text="Success", foreground="green")
+        self.success_labels[index].config(text="Pinging", foreground="green")
 
     def handle_test(self, index):
         print(index)
@@ -145,8 +222,10 @@ class IPAddressPage(ttk.Frame):
             print(self.list)
             self.count += 1  # Increment count
             self.success_labels[index].config(text="Success", foreground="green")
+            self.ip_status[index] = 1
         elif content == "0":
             self.success_labels[index].config(text="Failed", foreground="red")
+            self.ip_status[index] = 0
         else:
             print("Database couldn't be read")
 
@@ -163,3 +242,4 @@ if __name__ == "__main__":
     login_page = LoginPage(root)
     login_page.pack(fill='both', expand=True)
     root.mainloop()
+

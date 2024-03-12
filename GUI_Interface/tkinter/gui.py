@@ -14,6 +14,7 @@ from tkcalendar import DateEntry
 from ultralytics import YOLO
 import time
 import warnings
+import subprocess
 # Creating database ----------------------------------------------------------------------------------------------------
 
 
@@ -50,7 +51,8 @@ def create_database_and_tables():
                             ip3 TEXT,
                             ip4 TEXT,
                             plcip TEXT,
-                            plcport INTEGER
+                            plcport INTEGER,
+                            jam_check_time INTEGER
                         )''')
 
     # Commit changes and close connection
@@ -249,8 +251,8 @@ class Detection:
         self.jam_confirmed_count = 0
         self.jam_confirmed_limit = 3
         self.id_check_time = 5
-        self.jam_check_time = 45
-        self.jam_confirm_time = 60
+        self.jam_check_time = 5
+        self.jam_confirm_time = 10
         self.id_confirm_time = 30
         self.tyre_management = {}
         self.jam_management = {}
@@ -560,7 +562,7 @@ class IPAddressPage(ttk.Frame):
         const4 = int(height / 54)  # 16
 
 
-        label = ttk.Label(self, text="IP Address Page", font=('Helvetica', 20))  # Increased font size
+        label = ttk.Label(self, text="IP Address", font=('Helvetica', 20))  # Increased font size
         label.pack(pady= (100,20))
 
         ip_frame = ttk.Frame(self)
@@ -718,7 +720,8 @@ class WelcomePage(ttk.Frame):
         height = self.winfo_screenheight()
         width = int(width//2.11)
         height = int(height//2.46)
-        cap.set_model(f"{model}.pt")
+        #cap.set_model(f"{model}.pt")
+        cap.set_model("2.pt")
         while True:
             try:
                 if self.playing:
@@ -758,11 +761,15 @@ class WelcomePage(ttk.Frame):
             self.file_menu.add_command(label="Restart", command=self.restart_camera_feeds)
             self.file_menu.add_separator()
             self.file_menu.add_command(label="Show Records", command=self.show_records)
+            self.file_menu.add_separator()
+            self.file_menu.add_command(label="Configuration", command=self.configuration)
             self.menubar.add_cascade(label="Tools", menu=self.file_menu)
         else:
             self.master.config(menu=None)
         # Add File menu to the menubar
 
+    def configuration(self):
+        subprocess.Popen(['python', 'configuration.py'])
 
     def show_records(self):
         records_page = self.create_records_page(self.master)

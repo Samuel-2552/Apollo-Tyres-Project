@@ -1,3 +1,4 @@
+import shutil
 import threading
 import tkinter as tk
 from tkinter import ttk
@@ -243,6 +244,26 @@ def retrieve_ip(camera):
     conn.close()
     return ip[0] if ip else None
 
+def insert_record(camera, screenshot_location, no_of_tyres_jammed):
+        # Connect to the database
+        conn = sqlite3.connect('config.db')
+        cursor = conn.cursor()
+        timestamp = datetime.datetime.now()
+        target_directory = 'images'
+        if not os.path.exists(target_directory):
+            os.makedirs(target_directory)
+        # Get the filename from the image path
+        filename = os.path.basename(screenshot_location)
+        # Create the full path to save the image
+        destination_path = os.path.join(target_directory, filename)
+        print(destination_path)
+        shutil.copyfile(screenshot_location, destination_path)
+        sql_command = '''INSERT INTO records (camera, screenshot_location, timestamp, No_of_Tyres_Jammed)
+                        VALUES (?, ?, ?, ?)'''
+        cursor.execute(sql_command, (camera, destination_path, timestamp, no_of_tyres_jammed))
+        conn.commit()
+        conn.close()
+
 # ----------------------------------------------------------------------------------------------------------------------
 create_database_and_tables()
 # create_table()
@@ -263,18 +284,26 @@ class Detection:
         self.tracking_lineBack = [1000, 800, 600, 450, 300, 150]
         self.frame_number = None
         self.cap = cv2.VideoCapture(video_path)
+        self.cam_name = video_path + "_Camera"
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)
+        self.isJamConfirmed = False
 
     def create_capture(self,video_path):
         self.cap = cv2.VideoCapture(video_path)
         return self.cap
     
     def set_model(self, model_path):
+        self.model_path = model_path
         try:
             self.model = YOLO(model_path)
         except Exception:
             warnings.warn("Could not find the specified model. Loaded default model")
-            self.model = YOLO("best (3).pt")
+            self.model = YOLO("4.pt")
+    
+    def ping_plc(self):
+        ################################
+        #Logic for ping the plc module
+        pass
 
     def delete_id(self, id):
         if id in self.id_management:
@@ -282,12 +311,17 @@ class Detection:
 
     def delete_jam(self,id):
         if id in self.jam_management:
+            if self.jam_management[id]['is jam confirmed']:
+                self.jam_confirmed_count -= 1
             del self.jam_management[id]
 
     def delete_tyre(self,id):
         del self.tyre_management[id]
         self.delete_id(id)
         self.delete_jam(id)
+
+    def reset(self):
+        self.model = YOLO(self.model_path)
 
     def jam_manager(self,current_time):
     #if jam detected, insert the id in the jam management
@@ -301,9 +335,10 @@ class Detection:
             if current_time - self.jam_management[i]['time when jam detected'] > self.jam_confirm_time:
                 self.jam_management[i]['is jam confirmed'] = True
                 self.jam_confirmed_count += 1
-
         if self.jam_confirmed_count > self.jam_confirmed_limit:
             print("Signal")
+            return True
+        return False
 
     def id_manager(self,current_time):
     #for removing the false detected id and unused id
@@ -332,6 +367,9 @@ class Detection:
                 id_to_be_removed.append(i)
         for i in id_to_be_removed:
             self.delete_tyre(i)
+
+    def reset(self):
+        self.model.track()
 
     def detectBack(self, frame):
         results = self.model.track(frame, persist=True)
@@ -367,6 +405,10 @@ class Detection:
                             self.tyre_management[box_id]['is jam detected'] = False
                             self.delete_jam(box_id)
                     else:
+                        if self.isJamConfirmed and self.tyre_management[box_id]['is jam detected']:
+                            cv2.rectangle(frame, (int(box_coords[0][0]), int(box_coords[0][1])),
+                                                (int(box_coords[0][2]), int(box_coords[0][3])), (0, 0, 255), 1)
+                            continue
                         if current_time - self.tyre_management[box_id]['time when the tyre cross the line'] > self.jam_check_time:
                             cv2.rectangle(frame, (int(box_coords[0][0]), int(box_coords[0][1])),
                                                 (int(box_coords[0][2]), int(box_coords[0][3])), (0, 0, 255), 1)
@@ -383,7 +425,11 @@ class Detection:
                             break
 #fake detection also comes under the jam , if it comes to id, then jam should delete
 #backup the data if any error occured and initialize
-            self.jam_manager(current_time)
+            if self.jam_manager(current_time):
+                img_name = f"{time.asctime(time.localtime(time.time()))}{self.cam_name}.jpg"
+                cv2.imwrite(f"{img_name}.jpg",frame)
+                insert_record(self.cam_name, img_name, self.jam_confirmed_count)
+                self.ping_plc()
             self.id_manager(current_time)
         return frame
 
@@ -439,7 +485,10 @@ class Detection:
                             break
 #fake detection also comes under the jam , if it comes to id, then jam should delete
 #backup the data if any error occured and initialize
-            self.jam_manager(current_time)
+            if self.jam_manager(current_time):
+                img_name = f"{self.frame_number}{self.cam_name}.jpg"
+                cv2.imwrite(f"{img_name}",frame)
+                insert_record(self.cam_name, img_name, self.jam_confirmed_count)
             self.id_manager(current_time)
         return frame
 
@@ -715,6 +764,14 @@ class WelcomePage(ttk.Frame):
             t = threading.Thread(target=self.update_image, args=(label, cap, model))
             t.daemon = True
             t.start()
+            
+    def start_plc_from_stop(self):
+        for cap in self.capture_objects:
+            cap.isJamConfirmed = False
+            cap.tyre_management.clear()
+            cap.jam_management.clear()
+            cap.id_management.clear()
+            cap.reset()
 
     def update_image(self, label, cap:Detection, model):
         width = self.winfo_screenwidth()

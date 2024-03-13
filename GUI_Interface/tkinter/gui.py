@@ -15,6 +15,7 @@ from ultralytics import YOLO
 import time
 import warnings
 import subprocess
+import webbrowser
 # Creating database ----------------------------------------------------------------------------------------------------
 
 
@@ -244,7 +245,7 @@ def retrieve_ip(camera):
 
 # ----------------------------------------------------------------------------------------------------------------------
 create_database_and_tables()
-create_table()
+# create_table()
 
 class Detection:
     def __init__(self,video_path):
@@ -720,8 +721,8 @@ class WelcomePage(ttk.Frame):
         height = self.winfo_screenheight()
         width = int(width//2.11)
         height = int(height//2.46)
-        #cap.set_model(f"{model}.pt")
-        cap.set_model("2.pt")
+        cap.set_model(f"{model}.pt")
+        # cap.set_model("2.pt")
         while True:
             try:
                 if self.playing:
@@ -857,6 +858,15 @@ class WelcomePage(ttk.Frame):
         vsb.grid(row=4, column=3, sticky="ns")
         tree.configure(yscrollcommand=vsb.set)
 
+        tree.bind("<ButtonRelease-1>", lambda event: self.open_link(event, tree))
+
+    def open_link(self, event, tree):
+        # Get the item that was clicked
+        item = tree.selection()[0]
+        # Get the value of the "Screenshot Location" column for the clicked item
+        screenshot_location = tree.item(item, "values")[1]
+        # Open the link in the default web browser
+        webbrowser.open_new_tab(screenshot_location)
 
     def toggle_filter_options(self, filter_criteria, date_entry, camera_combobox):
         # Get the selected filter criteria

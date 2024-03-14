@@ -4,34 +4,37 @@ from tkinter import ttk, messagebox
 import sqlite3
 import cv2
 import subprocess
-
-import tkinter as tk
+import requests
+import os
+import threading
+from datetime import datetime
 from tkinter import ttk, messagebox
 import sqlite3
 import cv2
 import ctypes
+
 
 class LoginPage(ttk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
         self.master.title("Configuration")
-        self.username = "Apollo"  # Hardcoded username
-        self.password = "ap0110"  # Hardcoded password
+        self.username = "config"  # Hardcoded username
+        self.password = "c0nf1g"  # Hardcoded password
 
         self.create_widgets()
 
     def create_widgets(self):
         height = self.winfo_screenheight()
-        const1 = int(height/33.23) #26
-        const2 = int(height/8.64) #100
-        const3 = int(height/43.2) #20
-        const4 = int(height/54) #16
-        const5 = int(height/21.6) #40
+        const1 = int(height / 33.23)  # 26
+        const2 = int(height / 8.64)  # 100
+        const3 = int(height / 43.2)  # 20
+        const4 = int(height / 54)  # 16
+        const5 = int(height / 21.6)  # 40
 
         # print(const1,const2,const3,const4,const5)
 
-        label = ttk.Label(self, text="Login to Configure", font=('Times New Roman',const1))  # Increased font size
+        label = ttk.Label(self, text="Login to Configure", font=('Times New Roman', const1))  # Increased font size
         label.pack(pady=(const2, const3))  # Increased top padding
 
         username_label = ttk.Label(self, text="Username:", font=('Times New Roman', const4))  # Increased font size
@@ -44,7 +47,7 @@ class LoginPage(ttk.Frame):
         self.password_entry = ttk.Entry(self, show="*", font=('Times New Roman', const4))  # Increased font size
         self.password_entry.pack()
 
-        self.login_button = ttk.Button(self, text="Login", command=self.handle_login, style='Login.TButton' , width=14,)
+        self.login_button = ttk.Button(self, text="Login", command=self.handle_login, style='Login.TButton', width=14, )
         self.login_button.pack(pady=(const3, const5))
         button_font = ("Arial", const4)
         style = ttk.Style()
@@ -66,71 +69,90 @@ class LoginPage(ttk.Frame):
             print("Login failed")
             messagebox.showerror("Login Failed", "Invalid username or password.")
 
+
 class IPAddressPage(ttk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.count = 0  # Initialize count attribute
         self.list = []
         self.list_plc = []
-        self.ip_status = [0,0,0,0,1,1]
+        self.ip_status = [0, 0, 0, 0, 1, 1]
         height = self.winfo_screenheight()
         const1 = int(height / 72)  # 12
         const3 = int(height / 43.2)  # 20
         const2 = int(height / 57.6)  # 15
-        const4 = int(height / 54) 
+        const4 = int(height / 54)
 
         label = ttk.Label(self, text="Configuration", font=('Helvetica', const3))  # Increased font size
         label.pack(pady=10)
-        
+
         ip_frame = ttk.Frame(self)
         ip_frame.pack(pady=10)
 
-        ip_labels = ["IP Address 1:", "IP Address 2:", "IP Address 3:", "IP Address 4:","PLC_IP:","Jam_Check_Time: "]
+        ip_labels = ["IP Address 1:", "MODEL_IP1", "IP Address 2:", "MODEL_IP2", "IP Address 3:", "MODEL_IP3",
+                     "IP Address 4:", "MODEL_IP4", "PLC_IP:", "Jam_Check_Time: ","#UPDATE"]
         self.ip_entries = []
         self.success_labels = []  # Store success labels
 
-        for i in range(6):
-            ip_label = ttk.Label(ip_frame, text=ip_labels[i],font=("Times New Roman",const1))
+        for i in range(11):
+            ip_label = ttk.Label(ip_frame, text=ip_labels[i], font=("Times New Roman", const1))
             ip_label.grid(row=i, column=0, padx=const1, pady=const1)
 
-            ip_entry = ttk.Entry(ip_frame,font=('Helvetica', const4), width=const3)
+            ip_entry = ttk.Entry(ip_frame, font=('Helvetica', const4), width=const3)
             ip_entry.grid(row=i, column=1, padx=const1, pady=const1)
             self.ip_entries.append(ip_entry)
 
-            if i < 4:
-                test_button = ttk.Button(ip_frame, text="Test",width=const2,style="test.TButton",command=lambda i=i: self.handle_test(i))
+            if i == 0 or i == 2 or i == 4 or i == 6:
+                test_button = ttk.Button(ip_frame, text="Test", width=const2, style="test.TButton",
+                                         command=lambda i=i: self.handle_test(i))
                 test_button.grid(row=i, column=2, padx=const1, pady=const1)
                 button_font = ("Times New Roman", const1)
                 style = ttk.Style()
                 style.configure('test.TButton', font=button_font)
 
-                update_button = ttk.Button(ip_frame, text="UPDATE",width=const2,style="update.TButton", command=lambda i=i: self.update_ips(i))
+                update_button = ttk.Button(ip_frame, text="UPDATE", width=const2, style="update.TButton",
+                                           command=lambda i=i: self.update_ips(i))
                 update_button.grid(row=i, column=4, padx=const1, pady=const1)
                 button_font = ("Times New Roman", const1)
                 style = ttk.Style()
                 style.configure('update.TButton', font=button_font)
-                
-            elif i == 4: 
-                test_button = ttk.Button(ip_frame, text="Test",width=const2,style="test.TButton", command=lambda i=i: self.handle_plc(i))
+            elif i == 1 or i == 3 or i == 5 or i == 7:
+                update_button = ttk.Button(ip_frame, text="UPDATE", width=const2, style="update2.TButton",
+                                           command=lambda i=i: self.update_model(i))
+                update_button.grid(row=i, column=2, padx=const1, pady=const1)
+                button_font = ("Times New Roman", const1)
+                style = ttk.Style()
+                style.configure('update2.TButton', font=button_font)
+            elif i == 8:
+                test_button = ttk.Button(ip_frame, text="Test", width=const2, style="test.TButton",
+                                         command=lambda i=i: self.handle_plc(i))
                 test_button.grid(row=i, column=2, padx=const1, pady=const1)
                 button_font = ("Times New Roman", const1)
                 style = ttk.Style()
                 style.configure('test.TButton', font=button_font)
 
-                update_button = ttk.Button(ip_frame, text="UPDATE",width=const2,style="update.TButton", command=lambda i=i: self.update_ips(i))
+                update_button = ttk.Button(ip_frame, text="UPDATE", width=const2, style="update.TButton",
+                                           command=lambda i=i: self.update_ips(i))
                 update_button.grid(row=i, column=4, padx=const1, pady=const1)
                 button_font = ("Times New Roman", const1)
                 style = ttk.Style()
                 style.configure('update.TButton', font=button_font)
-            else:
-                update_button = ttk.Button(ip_frame, text="UPDATE",width=const2,style="update.TButton", command=lambda i=i: self.update_ips(i))
+            elif i == 9:
+                update_button = ttk.Button(ip_frame, text="UPDATE", width=const2, style="update.TButton",
+                                           command=lambda i=i: self.update_ips(i))
                 update_button.grid(row=i, column=2, padx=const1, pady=const1)
                 button_font = ("Times New Roman", const1)
                 style = ttk.Style()
                 style.configure('update.TButton', font=button_font)
-
+            else:
+                update_button = ttk.Button(ip_frame, text="UPDATE", width=const2, style="update.TButton",
+                                           command=lambda i=i: self.update_demo(i))
+                update_button.grid(row=i, column=2, padx=const1, pady=const1)
+                button_font = ("Times New Roman", const1)
+                style = ttk.Style()
+                style.configure('update.TButton', font=button_font)
             # Create and pack success labels initially empty
-            success_label = ttk.Label(ip_frame, text="",font=const1)
+            success_label = ttk.Label(ip_frame, text="", font=const1)
             success_label.grid(row=i, column=3, padx=const2, pady=const2)
             self.success_labels.append(success_label)
 
@@ -139,29 +161,74 @@ class IPAddressPage(ttk.Frame):
         self.master.grid_rowconfigure(0, weight=1)
         self.master.grid_columnconfigure(0, weight=1)
 
-    def update_ips(self,index):
+    DOWNLOAD_PATH = "C:/Users/HP/Desktop/Apollo-Tyres-Project/GUI_Interface/tkinter/templates"
+    def update_demo(self,index):
+        print("Button clicked")
+    def download_threaded(self, url, ind):
+        try:
+            # Make a GET request to the URL to download the file
+            DOWNLOAD_PATH = "D:\My Workspace\Projects\Flask - Framework\GUI_interface\models"
+            response = requests.get(url)
+
+            # Generate filename with current time
+            current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            filename = current_time + ".pt"
+
+            # Write the content to the file
+            with open(os.path.join(DOWNLOAD_PATH, filename), 'wb') as file:
+                file.write(response.content)
+                store_path = f"models\{filename}"
+                print(store_path)
+                conn = sqlite3.connect('config.db')
+                c = conn.cursor()
+
+                if ind == 1:
+                    c.execute('''UPDATE model SET model_1=? WHERE rowid=1''', (store_path,))
+                elif ind  == 3:
+                    c.execute('''UPDATE model SET model_2=? WHERE rowid=1''', (store_path,))
+                elif ind == 5:
+                    c.execute('''UPDATE model SET model_3=? WHERE rowid=1''', (store_path,))
+                elif ind == 7:
+                    c.execute('''UPDATE model SET model_4=? WHERE rowid=1''', (store_path,))
+                else:
+                    print("index not found")
+
+                conn.commit()
+                conn.close()
+            print("File downloaded successfully!")
+        except Exception as e:
+            print("Error occurred while downloading:", e)
+
+    def update_model(self, index):
+        model_link = self.ip_entries[index].get()
+        print(model_link)
+        download_thread = threading.Thread(target=self.download_threaded, args=(model_link,index))
+        download_thread.start()
+
+    def update_ips(self, index):
         if self.ip_status[index] == 1:
             ip = self.ip_entries[index].get()
             conn = sqlite3.connect("config.db")
             cursor = conn.cursor()
             if index < 4:
-                respective_ip = int(index+1)
+                respective_ip = int(index + 1)
                 cursor.execute("UPDATE cameras SET ip{}=? WHERE id=1".format(respective_ip),
-                                    (ip,))
+                               (ip,))
                 messagebox.showinfo("Updated Successful", "IP addresses updated successfully.")
             elif index == 4:
                 cursor.execute("UPDATE cameras SET plcip=? WHERE id=1",
-                                    (ip,))
+                               (ip,))
                 messagebox.showinfo("Updated Successful", "IP addresses updated successfully.")
             else:
                 cursor.execute("UPDATE cameras SET jam_check_time=? WHERE id=1",
-                                    (ip,))
+                               (ip,))
                 messagebox.showinfo("Updated Successful", "Jam checking time updated successfully.")
             conn.commit()
             conn.close()
-           
+
         else:
             messagebox.showerror("IP Failed", "Recheck the IP")
+
     def handle_update(self):
         # Connect to the database
         if self.count >= 4:
@@ -170,7 +237,7 @@ class IPAddressPage(ttk.Frame):
                 cursor = conn.cursor()
                 # Get the IP addresses from the entries
                 ip_addresses = [entry.get() for entry in self.ip_entries]
-                plcip =  self.ip_entries[-1].get()  
+                plcip = self.ip_entries[-1].get()
                 plcport = 5000  # Hardcoded plcport
                 # Update the first row of the cameras table with the IP addresses
                 cursor.execute("UPDATE cameras SET ip1=?, ip2=?, ip3=?, ip4=?, plcip=?, plcport=? WHERE id=1",
@@ -229,9 +296,11 @@ class IPAddressPage(ttk.Frame):
         else:
             print("Database couldn't be read")
 
+
 def get_screen_resolution():
     user32 = ctypes.windll.user32
     return user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -242,4 +311,3 @@ if __name__ == "__main__":
     login_page = LoginPage(root)
     login_page.pack(fill='both', expand=True)
     root.mainloop()
-

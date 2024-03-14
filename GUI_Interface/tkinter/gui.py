@@ -284,6 +284,7 @@ class Detection:
         self.tracking_lineBack = [1000, 800, 600, 450, 300, 150]
         self.frame_number = None
         self.cap = cv2.VideoCapture(video_path)
+        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 3)
         self.cam_name = video_path + "_Camera"
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)
         self.isJamConfirmed = False
